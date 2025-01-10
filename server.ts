@@ -5,6 +5,7 @@ import { AppDataSource } from "./app/database";
 import dotenv from "dotenv";
 import swaggerJsdoc from "swagger-jsdoc";
 import swaggerUi from "swagger-ui-express";
+import rateLimiter from "./app/middlewares";
 
 dotenv.config({ path: ".env" });
 
@@ -25,6 +26,7 @@ const app = express();
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+app.use(rateLimiter);
 app.use("/", routes);
 app.use(
   "/docs",

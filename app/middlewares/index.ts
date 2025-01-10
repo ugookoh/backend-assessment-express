@@ -57,3 +57,39 @@ export const authenticateToken = (
     next();
   });
 };
+
+const rateLimitStore: { [key: string]: { count: number; timestamp: number } } =
+  {};
+
+export const rateLimiter = (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  const ip = req.ip;
+  const currentTime = Date.now();
+  const limit = Number(process.env.AMOUNT_ALLOWED_PER_UNIT || 10);
+  const timeFrame = Number(process.env.UNIT_IN_MINS || 60) * 1000;
+
+  if (!rateLimitStore[ip]) {
+    rateLimitStore[ip] = { count: 1, timestamp: currentTime };
+    next();
+  } else {
+    const timeElapsed = currentTime - rateLimitStore[ip].timestamp;
+
+    if (timeElapsed < timeFrame) {
+      if (rateLimitStore[ip].count >= limit) {
+        return res
+          .status(StatusCodes.TOO_MANY_REQUESTS)
+          .json({ message: "Too many requests. Please try again later." });
+      }
+      rateLimitStore[ip].count += 1;
+      next();
+    } else {
+      rateLimitStore[ip] = { count: 1, timestamp: currentTime };
+      next();
+    }
+  }
+};
+
+export default rateLimiter;
