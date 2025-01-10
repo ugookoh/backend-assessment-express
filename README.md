@@ -2,7 +2,10 @@
 
 Hello Team! Here is some information about the backend and how to get it running.
 
-## Setup Instructions
+## Where to start?
+The backend is currently hosted at https://backend-assessment-express.onrender.com/docs/. You can make request to the root at https://backend-assessment-express.onrender.com.
+
+## Local Setup Instructions
 
 Before starting, please run the following command to install all the dependencies:
 ```bash
